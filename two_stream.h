@@ -111,9 +111,13 @@ void two_stream(int NLAYER, int kmin, double *w0_array, double *g0_array, \
   double SOURCE_Y2[NLAYER - kmin + 1];
   double source_temp[NLAYER - kmin + 1];
 
-  double gangle[] = {0.0985350858, 0.3045357266, 0.5620251898, 0.8019865821, 0.9601901429};
-  double gweight[] = {0.0157479145, 0.0739088701, 0.1463869871, 0.1671746381, 0.0967815902};
-  int num_gangle = 5;
+  //double gangle[] = {0.0985350858, 0.3045357266, 0.5620251898, 0.8019865821, 0.9601901429};
+  //double gweight[] = {0.0157479145, 0.0739088701, 0.1463869871, 0.1671746381, 0.0967815902};
+  //int num_gangle = 5;
+
+  double gangle[] = {1};
+  double gweight[] = {1};
+  int num_gangle = 1;
 
   // Upward and downwards intensities
   double INTENSITY_DOWN[NLAYER - kmin + 1][num_gangle];
@@ -269,6 +273,7 @@ void two_stream(int NLAYER, int kmin, double *w0_array, double *g0_array, \
 
     B0[J] = temp_val_1 * (1.0 / temp_val_2);
     B1[J] = (B0[J] - B0[KINDEX]) / TAULS[J];
+
   }
 
   // The very top of the atmosphere is isothermal
@@ -290,6 +295,7 @@ void two_stream(int NLAYER, int kmin, double *w0_array, double *g0_array, \
 
     CP[J]  = (B0[KINDEX] + B1[J] * temp_gamma_val[J]) * 2.0 * PI * mu_1;
     CPB[J] = CP[J] + B1[J] * TAULS[J] * 2.0 * PI * mu_1;
+
 
     CM[J]  = (B0[KINDEX] - B1[J] * temp_gamma_val[J]) * 2.0 * PI * mu_1;
     CMB[J] = CM[J] + B1[J] * TAULS[J] * 2.0 * PI * mu_1;
@@ -381,7 +387,6 @@ void two_stream(int NLAYER, int kmin, double *w0_array, double *g0_array, \
     INTENSITY_UP[NLAYER-1][g] = 2.0 * BB_BOTTOM_OF_ATM * EMIS * PI;
     INTENSITY_DOWN[0][g] =  (1. - exp(-TAULS[0] / mu)) * BB_TOP_OF_ATM * 2. * PI;
 
-
     for(J=0; J<NLAYER; J++)
     {
       INTENSITY_DOWN[J+1][g] = INTENSITY_DOWN[J][g] * exp(-TAULS[J]/mu) + \
@@ -389,7 +394,6 @@ void two_stream(int NLAYER, int kmin, double *w0_array, double *g0_array, \
                       SOURCE_K[J]/(LAMBDAS[J]*mu - 1.0) * (exp(-TAULS[J]/mu) - exp(-TAULS[J]*LAMBDAS[J])) + \
                       SIGMA_1[J] * (1.0 - exp(-TAULS[J]/mu)) + \
                       SIGMA_2[J] * (mu * exp(-TAULS[J]/mu) + TAULS[J] - mu);
-
 
       Z = NLAYER - 1 - J;
       INTENSITY_UP[Z][g] = INTENSITY_UP[Z+1][g] * exp(-TAULS[Z]/mu) + \
@@ -407,7 +411,6 @@ void two_stream(int NLAYER, int kmin, double *w0_array, double *g0_array, \
         for(int g = 0; g < num_gangle; ++g)
         {
             weighted_sum += INTENSITY_UP[J][g] * gweight[g];
-            //printf("%d %d %le\n", J, g, gweight[g]);
         }
         HEMISPHERIC_SOURCE_FNC[J] = weighted_sum;
     }
