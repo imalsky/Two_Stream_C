@@ -9,19 +9,19 @@
 
 int main() {
     // Sample data for the function (you'll need to provide appropriate values or adjust as necessary)
-    int NLAYER = 10;
+    int NLAYER = 200;
     int kmin = 1;
     double w0_array[NLAYER];
     double g0_array[NLAYER];
     double temperature_array[NLAYER + 1];
     double tau_array[NLAYER];
-    double NU = 1.133e+14; // Sample value
+    double NU = 1.298927e+14; // Sample value
     double NU_BIN = 1.0; // Sample value
     double incident_frac = 1.0; // Sample value
     double dtau_array[NLAYER];
 
-    double start_w0 = 0.2;
-    double end_w0 = 0.8;
+    double start_w0 = 0.0;
+    double end_w0 = 0.0;
     double step_w0 = (end_w0 - start_w0) / (NLAYER - 1);
 
     double startLog_dtau = log(1e-4);
@@ -49,7 +49,7 @@ int main() {
 
 
     for (int i = 0; i < NLAYER + 1; i++) {
-        temperature_array[i] = 1000.0 + i * 100;
+        temperature_array[i] = 1000.0;
     }
 
 

@@ -2,6 +2,9 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="92809d0f-a07f-46e0-a35a-ea774cd8440d" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.ipynb_checkpoints/PICASO_TOON-checkpoint.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/.ipynb_checkpoints/PICASO_TOON-checkpoint.ipynb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/PICASO_TOON.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/PICASO_TOON.ipynb" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main.c" beforeDir="false" afterPath="$PROJECT_DIR$/main.c" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main_program" beforeDir="false" afterPath="$PROJECT_DIR$/main_program" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/two_stream.h" beforeDir="false" afterPath="$PROJECT_DIR$/two_stream.h" afterDir="false" />
@@ -26,7 +29,7 @@
   "keyToString": {
     "RunOnceActivity.OpenProjectViewOnStart": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
-    "last_opened_file_path": "/home/imalsky"
+    "last_opened_file_path": "/media/imalsky/Samsung_T5/NEW_SPECTRAL_PROCESSING"
   }
 }]]></component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
