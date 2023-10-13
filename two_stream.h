@@ -46,7 +46,7 @@ void two_stream(int NLAYER, int kmin, double *w0_array, double *g0_array, \
   double G0[NLAYER - kmin + 1];
 
   // Scattering and atmosphere parameters
-  double TEMPS[NLAYER - kmin + 1];
+  double TEMPS[NLAYER - kmin + 2];
   double TAUCS[NLAYER - kmin + 2];
   double TAULS[NLAYER - kmin + 1];
 
@@ -82,7 +82,7 @@ void two_stream(int NLAYER, int kmin, double *w0_array, double *g0_array, \
 
   // Planck Intensities
   // B1 is the slope of intensities between layers
-  double B0[NLAYER - kmin + 1];
+  double B0[NLAYER - kmin + 2];
   double B1[NLAYER - kmin + 1];
   double TEMP[NLAYER - kmin + 1];
   double DTAUS[NLAYER - kmin + 1];
@@ -155,8 +155,7 @@ void two_stream(int NLAYER, int kmin, double *w0_array, double *g0_array, \
   FLUX_SURFACE_QUADRATURE = 1;
   mu_0 = cos(incident_frac);
 
-  printf("Be careful, assigning stellar flux here as: %le\n", FLUX_SURFACE_QUADRATURE);
-
+  printf("Be careful, assigning stellar flux here as: %le\n\n", FLUX_SURFACE_QUADRATURE);
 
   // Assign arrays for the characteristics of the atmosphere based on the input arrays
   TAUCS[0] = 0.0;
@@ -164,7 +163,6 @@ void two_stream(int NLAYER, int kmin, double *w0_array, double *g0_array, \
   {
     W0[J] = w0_array[J+kmin-1];
     G0[J] = g0_array[J+kmin-1];
-    TEMPS[J] = temperature_array[J+kmin-1];
 
     DTAUS[J]   = dtau_array[J+kmin-1];
     TAULS[J]   = dtau_array[J+kmin-1];
@@ -173,6 +171,12 @@ void two_stream(int NLAYER, int kmin, double *w0_array, double *g0_array, \
     DIRECT_QUADRATURE[J]  = mu_0 * PI * FLUX_SURFACE_QUADRATURE * exp(-1.0 * (TAUCS[J] + TAULS[J]) / mu_0);
     DIRECT_HEMISPHERIC[J] = 0.0;
   }
+
+  for (J=0; J<NLAYER+1; J++)
+  {
+      TEMPS[J] = temperature_array[J+kmin-1];
+  }
+
 
   // Calculate the intensity at the top of the atmosphere
   temp_val_1 = (2.0 * h_constant * (NU * NU * NU)) / (CLIGHT * CLIGHT);
@@ -190,10 +194,6 @@ void two_stream(int NLAYER, int kmin, double *w0_array, double *g0_array, \
   //***************************************************************************************
   //***************************************************************************************
   //***************************************************************************************
-
-
-
-
 
 
 
@@ -217,9 +217,11 @@ void two_stream(int NLAYER, int kmin, double *w0_array, double *g0_array, \
     y1[J]    =  (2.0 - (W0[J] * (1.0 + G0[J])));
     y2[J]    =  (W0[J] * (1.0 - G0[J]));
 
+
     LAMBDAS[J]    =  sqrt(fabs(pow(y1[J], 2.0) - pow(y2[J], 2.0)));
     GAMMA[J]  =  y2[J] / (y1[J] + LAMBDAS[J]);
     temp_e_val[J]   =  exp(-LAMBDAS[J] * TAULS[J]);
+
 
     e1[J]   =  1.0 + GAMMA[J] * temp_e_val[J];  //e1
     e2[J]   =  1.0 - GAMMA[J] * temp_e_val[J];  //e2
@@ -245,7 +247,7 @@ void two_stream(int NLAYER, int kmin, double *w0_array, double *g0_array, \
     B[L] =  e1[J] * e1[J+1]   - e3[J+1] * e3[J];
     D[L] =  e3[J]   * e4[J+1] - e1[J]   * e2[J+1];
   }
-
+  
   for(J=0; J<NLAYER-1; J++)
   {
     L = 2*J+1;
@@ -253,52 +255,42 @@ void two_stream(int NLAYER, int kmin, double *w0_array, double *g0_array, \
     A[L]   =  e2[J+1] * e1[J]   - e3[J] * e4[J+1];
     B[L]   =  e2[J] * e2[J+1]   - e4[J+1] * e4[J];
     D[L]   =  e1[J+1] * e4[J+1] - e3[J+1] * e2[J+1];
+
   }
 
 
   // This is the part of the code that solves for the blackbody stuff
-  for(J=0; J<NLAYER; J++)
+  for(J=0; J<NLAYER + 1; J++)
   {
-    if(0 >= J-1)
-    {
-      KINDEX = 0;
-    }
-    else
-    {
-      KINDEX = J-1;
-    }
-
     temp_val_1 = (2.0 * h_constant * (NU * NU * NU)) / (CLIGHT * CLIGHT);
     temp_val_2 = exp(h_constant * NU / (bolz_constant * TEMPS[J])) - 1.0;
-
     B0[J] = temp_val_1 * (1.0 / temp_val_2);
-    B1[J] = (B0[J] - B0[KINDEX]) / TAULS[J];
-
   }
 
+  // This is the part of the code that solves for the blackbody stuff
+  for(J=0; J<NLAYER; J++)
+  {
+    temp_val_1 = (2.0 * h_constant * (NU * NU * NU)) / (CLIGHT * CLIGHT);
+    temp_val_2 = exp(h_constant * NU / (bolz_constant * TEMPS[J])) - 1.0;
+    B1[J] = (B0[J+1] - B0[J]) / TAULS[J];
+  }
+
+
+
   // The very top of the atmosphere is isothermal
-  B1[0] = 0;
+  B1[0] = (B0[1] - B0[0]) / TAULS[0];
 
   // This solves for the C values in the toon code
   for(J=0; J<NLAYER; J++)
   {
-    if(0 > J-1)
-    {
-      KINDEX = 0;
-    }
-    else
-    {
-      KINDEX = J-1;
-    }
-
     temp_gamma_val[J]   = 1.0 / (y1[J] + y2[J]);
 
-    CP[J]  = (B0[KINDEX] + B1[J] * temp_gamma_val[J]) * 2.0 * PI * mu_1;
+    CP[J]  = (B0[J] + B1[J] * temp_gamma_val[J]) * 2.0 * PI * mu_1;
+    CM[J]  = (B0[J] - B1[J] * temp_gamma_val[J]) * 2.0 * PI * mu_1;
+
     CPB[J] = CP[J] + B1[J] * TAULS[J] * 2.0 * PI * mu_1;
-
-
-    CM[J]  = (B0[KINDEX] - B1[J] * temp_gamma_val[J]) * 2.0 * PI * mu_1;
     CMB[J] = CM[J] + B1[J] * TAULS[J] * 2.0 * PI * mu_1;
+
   }
 
 
@@ -401,6 +393,8 @@ void two_stream(int NLAYER, int kmin, double *w0_array, double *g0_array, \
                         SOURCE_H[Z] / (LAMBDAS[Z]*mu+1.0) * (1.0 - exp(-TAULS[Z] * (LAMBDAS[Z] + 1.0/mu))) + \
                         ALPHA_1[Z] * (1.0 - exp(-TAULS[Z]/mu)) + \
                         ALPHA_2[Z] * (mu - ((TAULS[Z] + mu) * (exp(-TAULS[Z]/mu))));
+
+      printf("%le %le\n", INTENSITY_DOWN[J+1][g], INTENSITY_UP[Z][g]);
     }
   }
 

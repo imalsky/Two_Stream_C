@@ -13,7 +13,7 @@ int main() {
     int kmin = 1;
     double w0_array[NLAYER];
     double g0_array[NLAYER];
-    double temperature_array[NLAYER];
+    double temperature_array[NLAYER + 1];
     double tau_array[NLAYER];
     double NU = 1.133e+14; // Sample value
     double NU_BIN = 1.0; // Sample value
@@ -38,7 +38,6 @@ int main() {
     for (int i = 0; i < NLAYER; i++) {
         w0_array[i] = start_w0 + i * step_w0;
         g0_array[i] = 0.0;
-        temperature_array[i] = 1000.0 + i * 100;
 
         // Compute the dtau value
         dtau_array[i] = pow(M_E, startLog_dtau + i * step_dtau);
@@ -47,6 +46,12 @@ int main() {
         running_sum += dtau_array[i];
         tau_array[i] = running_sum;
     }
+
+
+    for (int i = 0; i < NLAYER + 1; i++) {
+        temperature_array[i] = 1000.0 + i * 100;
+    }
+
 
     // Call the two_stream function
     two_stream(NLAYER, kmin, w0_array, g0_array, temperature_array, tau_array, NU, NU_BIN, incident_frac, dtau_array, intensity_vals);
