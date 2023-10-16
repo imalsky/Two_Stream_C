@@ -61,6 +61,7 @@ void two_stream(int NLAYER, int kmin, double *w0_array, double *g0_array, \
   double GAMMA[NLAYER - kmin + 1];
   double temp_e_val[NLAYER - kmin + 1];
   double exptrm_positive[NLAYER - kmin + 1];
+  double exptrm_negative[NLAYER - kmin + 1];
   double e1[NLAYER - kmin + 1];
   double e2[NLAYER - kmin + 1];
   double e3[NLAYER - kmin + 1];
@@ -119,7 +120,7 @@ void two_stream(int NLAYER, int kmin, double *w0_array, double *g0_array, \
   //int num_gangle = 5;
 
   double gangle[] = {1};
-  double gweight[] = {1};
+  double gweight[] = {0.5};
   int num_gangle = 1;
 
   // Upward and downwards intensities
@@ -225,6 +226,8 @@ void two_stream(int NLAYER, int kmin, double *w0_array, double *g0_array, \
 
     temp_e_val[J]   =  exp(-LAMBDAS[J] * TAULS[J]);
     exptrm_positive[J] = exp(fmin(LAMBDAS[J] * TAULS[J], 15));
+    exptrm_negative[J] = 1.0 / exptrm_positive[J];
+
 
     e1[J]   =  exptrm_positive[J] + GAMMA[J] * temp_e_val[J];  //e1
     e2[J]   =  exptrm_positive[J] - GAMMA[J] * temp_e_val[J];  //e2
@@ -269,6 +272,7 @@ void two_stream(int NLAYER, int kmin, double *w0_array, double *g0_array, \
 
     CPB[J] = CP[J] + B1[J] * TAULS[J] * 2.0 * PI * mu_1;
     CMB[J] = CM[J] + B1[J] * TAULS[J] * 2.0 * PI * mu_1;
+
   }
 
 
@@ -395,30 +399,29 @@ void two_stream(int NLAYER, int kmin, double *w0_array, double *g0_array, \
     for(J=0; J<NLAYER; J++)
     {
       INTENSITY_DOWN[J+1][g] = INTENSITY_DOWN[J][g] * exp(-TAULS[J]/mu) + \
-                      SOURCE_J[J]/(LAMBDAS[J] * mu + 1.0) * (exp(TAULS[J]*LAMBDAS[J]) - exp(-TAULS[J]/mu)) + \
-                      SOURCE_K[J]/(LAMBDAS[J] * mu - 1.0) * (exp(-TAULS[J]/mu) - exp(-TAULS[J]*LAMBDAS[J])) + \
+                      SOURCE_J[J]/(LAMBDAS[J] * mu + 1.0) * (exptrm_positive[J] - exp(-TAULS[J]/mu)) + \
+                      SOURCE_K[J]/(LAMBDAS[J] * mu - 1.0) * (exp(-TAULS[J]/mu) - exptrm_negative[J]) + \
                       SIGMA_1[J] * (1.0 - exp(-TAULS[J]/mu)) + \
                       SIGMA_2[J] * (mu * exp(-TAULS[J]/mu) + TAULS[J] - mu);
 
 
 
-
       Z = NLAYER - 1 - J;
       INTENSITY_UP[Z][g] = INTENSITY_UP[Z+1][g] * exp(-TAULS[Z]/mu) + \
-                        SOURCE_G[Z]/(LAMBDAS[Z]*mu-1.0) * (exp(TAULS[Z]*LAMBDAS[Z])*exp(-TAULS[Z]/mu) - 1.0) + \
-                        SOURCE_H[Z]/(LAMBDAS[Z]*mu+1.0) * (1.0 - exp(-TAULS[Z]*LAMBDAS[Z])*exp(-TAULS[Z]/mu)) + \
+                        SOURCE_G[Z]/(LAMBDAS[Z]*mu-1.0) * (exptrm_positive[Z]*exp(-TAULS[Z]/mu) - 1.0) + \
+                        SOURCE_H[Z]/(LAMBDAS[Z]*mu+1.0) * (1.0 - exptrm_negative[Z]*exp(-TAULS[Z]/mu)) + \
                         ALPHA_1[Z] * (1.0 - exp(-TAULS[Z]/mu)) + \
                         ALPHA_2[Z] * (mu - ((TAULS[Z] + mu) * (exp(-TAULS[Z]/mu))));
 
-      printf("%le %le %le %le\n", TEMPS[J],B0[J], INTENSITY_UP[Z][g], SOURCE_G[Z]/(LAMBDAS[Z]*mu-1.0) * (exptrm_positive[J]*exp(-TAULS[Z]/mu) - 1.0));
+      //printf("%d %d %le \n", J,g, INTENSITY_UP[Z][g]);
     }
   }
 
     // Calculate the weighted sum for each layer
-    for(int J = 0; J < NLAYER; ++J)
+    for(int J = 0; J < NLAYER; J++)
     {
         double weighted_sum = 0.0;
-        for(int g = 0; g < num_gangle; ++g)
+        for(int g = 0; g < num_gangle; g++)
         {
             weighted_sum += INTENSITY_UP[J][g] * gweight[g];
         }
@@ -478,10 +481,14 @@ void two_stream(int NLAYER, int kmin, double *w0_array, double *g0_array, \
     GAMMA[J]  =  y2[J] / (y1[J] + LAMBDAS[J]);
     temp_e_val[J]   =  exp(-LAMBDAS[J] * TAULS[J]);
 
-    e1[J]   =  1.0 + GAMMA[J] * temp_e_val[J];  //e1
-    e2[J]   =  1.0 - GAMMA[J] * temp_e_val[J];  //e2
-    e3[J]   =  GAMMA[J] + temp_e_val[J];        //e3
-    e4[J]   =  GAMMA[J] - temp_e_val[J];        //e4
+    exptrm_positive[J] = exp(fmin(LAMBDAS[J] * TAULS[J], 15));
+    exptrm_negative[J] = 1.0 / exptrm_positive[J];
+
+
+    e1[J]   =  exptrm_positive[J] + GAMMA[J] * temp_e_val[J];  //e1
+    e2[J]   =  exptrm_positive[J] - GAMMA[J] * temp_e_val[J];  //e2
+    e3[J]   =  GAMMA[J]*exptrm_positive[J] + temp_e_val[J];        //e3
+    e4[J]   =  GAMMA[J]*exptrm_positive[J] - temp_e_val[J];        //e4
   }
 
 

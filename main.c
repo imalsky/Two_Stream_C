@@ -9,7 +9,7 @@
 
 int main() {
     // Sample data for the function (you'll need to provide appropriate values or adjust as necessary)
-    int NLAYER = 200;
+    int NLAYER = 5000;
     int kmin = 1;
     double w0_array[NLAYER];
     double g0_array[NLAYER];
@@ -24,8 +24,8 @@ int main() {
     double end_w0 = 0.0;
     double step_w0 = (end_w0 - start_w0) / (NLAYER - 1);
 
-    double startLog_dtau = log(1e-4);
-    double endLog_dtau = log(1e2);
+    double startLog_dtau = log(1e-5);
+    double endLog_dtau = log(1e5);
     double step_dtau = (endLog_dtau - startLog_dtau) / (NLAYER - 1);
 
     double test;
@@ -55,15 +55,15 @@ int main() {
 
     // Call the two_stream function
     two_stream(NLAYER, kmin, w0_array, g0_array, temperature_array, tau_array, NU, NU_BIN, incident_frac, dtau_array, intensity_vals);
-    //printf("Two stream %le %le\n", intensity_vals[0], intensity_vals[1]);
+    printf("Two stream %le %le\n", intensity_vals[0], intensity_vals[1]);
 
 
-    //printf("\n");
-    //for(int J=0; J<NLAYER; J++)
-    //{
-    //    test = test + Planck(temperature_array[J], CLIGHT / NU) * exp(-tau_array[J]) * dtau_array[J];
-    //}
-    //printf("Abs Only %le\n", test);
+    printf("\n");
+    for(int J=0; J<NLAYER; J++)
+    {
+        test = test + Planck(temperature_array[J], CLIGHT / NU) * exp(-tau_array[J]) * dtau_array[J];
+    }
+    printf("Abs Only %le\n", test);
 
     return 0;
 }
