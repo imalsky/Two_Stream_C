@@ -1,15 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="92809d0f-a07f-46e0-a35a-ea774cd8440d" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.ipynb_checkpoints/PICASO_TOON-checkpoint.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/.ipynb_checkpoints/PICASO_TOON-checkpoint.ipynb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/PICASO_TOON.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/PICASO_TOON.ipynb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main.c" beforeDir="false" afterPath="$PROJECT_DIR$/main.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main_program" beforeDir="false" afterPath="$PROJECT_DIR$/main_program" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/toon_stand_alone_tests.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/toon_stand_alone_tests.ipynb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/two_stream.h" beforeDir="false" afterPath="$PROJECT_DIR$/two_stream.h" afterDir="false" />
-    </list>
+    <list default="true" id="92809d0f-a07f-46e0-a35a-ea774cd8440d" name="Changes" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
